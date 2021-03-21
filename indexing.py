@@ -15,7 +15,7 @@ Doc.set_extension("did", default=0)
 
 files = ["articles1.csv", "articles2.csv", "articles3.csv"]
 
-N = 30
+N = 142570
 # N = 10000
 articles = []
 

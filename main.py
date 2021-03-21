@@ -49,7 +49,8 @@ print("\u001b[34m[*] We are ready for querying\u001b[0m")
 def simplify(query: str = ""):
     doc = nlp(query)
     list_str = [token.lemma_.lower().strip() for token in doc]
-    return list_str
+    list_ent = [ent.text.lower().strip() for ent in doc.ents]
+    return list_str.extend(list_ent)
 
 while True:
     # input
