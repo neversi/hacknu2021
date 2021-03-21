@@ -1,0 +1,9 @@
+.git
+nlp
+*.pyc
+*.json
+try.py
+dara.py
+parse_query.py
+*.csv
+archive
