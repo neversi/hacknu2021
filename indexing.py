@@ -5,16 +5,17 @@ import json
 import time
 import math
 from spacy.tokens import Doc
+# from pyate.term_extraction_pipeline import TermExtractionPipeline       
 
 csv.field_size_limit(sys.maxsize)
 spacy.prefer_gpu()
-# nlp = spacy.load("en_core_web_lg")
-nlp = spacy.load("en_core_web_lg", disable=['ner', 'parser'])
+nlp = spacy.load("en_core_web_lg")
+# nlp = spacy.load("en_core_web_lg", disable=['ner', 'parser'])
 Doc.set_extension("did", default=0)
 
 files = ["articles1.csv", "articles2.csv", "articles3.csv"]
 
-N = 142570
+N = 30
 # N = 10000
 articles = []
 
@@ -73,19 +74,30 @@ doc_index = 0
 #         if doc_index % 10 == 0:
 #                 print(doc_index)
 
-for doc, meta in nlp.pipe(articles, as_tuples=True, batch_size=15):
+for doc, meta in nlp.pipe(articles, as_tuples=True, batch_size=10):
         dict2[meta["did"]] = (len(doc), doc.text)
         local_dict = dict()
         for token in doc:
-                if token.is_stop or token.is_punct:
+                if token.is_stop or token.is_punct or token.text == "":
                         continue
                 word = token.lemma_.lower().strip()
                 if word not in local_dict:
                         local_dict[word] = 1
                 else:
                         local_dict[word] += 1
-        
+
+        for ent in doc.ents:
+                word = ent.text.lower().strip()
+                if word not in local_dict:
+                        local_dict[word] = 1
+                else:
+                        local_dict[word] += 1
+
+
+
         for key, val in local_dict.items():
+                if key == "":
+                        continue
                 if key not in dict1:
                         dict1[key] = 1
                 else:
@@ -93,6 +105,7 @@ for doc, meta in nlp.pipe(articles, as_tuples=True, batch_size=15):
                 if key not in dict4:
                         dict4[key] = {}
                 dict4[key][meta["did"]] = val
+
         doc_index += 1
         if doc_index % 10 == 0:
                 print(doc_index)
